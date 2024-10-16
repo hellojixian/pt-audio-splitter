@@ -2,8 +2,8 @@
 from pydub import AudioSegment
 import os
 from tqdm import tqdm
-from .libs.spliter import find_nearest_silence, process_audio_chunk, init_folders
-from .libs.recognizer import recognize_and_rename_audio
+from libs.spliter import find_nearest_silence, process_audio_chunk, init_folders
+from libs.recognizer import recognize_and_rename_audio
 
 # 定义每次加载的最大时间块大小（例如5分钟的块，300秒 = 300000毫秒）
 chunk_duration = 60000   # 最大1分钟的音频块

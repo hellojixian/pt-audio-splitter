@@ -5,7 +5,7 @@ import os
 # 创建文件夹存储片段
 project_folder = os.path.dirname(os.path.dirname(__file__))
 output_segments_folder = f"{project_folder}/output_segments"
-output_folder = f"{project_folder}/output_segments"
+output_folder = f"{project_folder}/output_words"
 
 chunk_nearset_silence = 5000  # 5秒内的静音位置
 word_index = 0
@@ -47,17 +47,18 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
     for _, segment in enumerate(segments):
         segment_file = f"{output_segments_folder}/segment_{word_index}.wav"
         segment.export(segment_file, format="wav")
-        print(f"导出文件: {segment_file}")
 
         # 识别该音频片段中的内容
         recognized_word = cb(segment_file)
 
         # 使用识别到的第一个单词重新命名音频文件
-        new_file_name = f"{output_folder}/{word_index}_{recognized_word}.wav"
-        os.rename(segment_file, new_file_name)
-        print(f"重命名为: {new_file_name}")
-        word_index += 1
+        if recognized_word:
+            recognized_word = recognized_word.replace(" ", "-")
+            new_file_name = f"{output_folder}/{str(word_index).zfill(4)}_{recognized_word}.wav"
+            os.rename(segment_file, new_file_name)
+            # print(f"重命名为: {new_file_name}")
+            word_index += 1
 
         # 更新进度条，假设每个 segment 的长度为音频片段的一部分
         if progress_bar:
-            progress_bar.update(len(segment/1000))  # 更新进度条，增加处理的音频长度
+            progress_bar.update(len(segment)/1000)  # 更新进度条，增加处理的音频长度
