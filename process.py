@@ -14,7 +14,7 @@ audio = AudioSegment.from_wav(f"{project_folder}/source/raw_audio_1.wav")
 
 # 加载大文件
 total_duration = len(audio)  # 获取总长度（毫秒）
-progress_bar = tqdm(total=total_duration/1000, unit='sec', desc='Processing Audio')
+progress_bar = tqdm(total=total_duration, unit='sec', desc='Processing Audio')
 
 # 按块处理，寻找静音位置作为边界
 chunk_index = 0
@@ -37,7 +37,7 @@ while start_time < total_duration:
     start_time = adjusted_end_time
     chunk_index += 1
 
-    progress_bar.update((adjusted_end_time - start_time)/1000)  # 更新外部循环的进度条
+    progress_bar.update((adjusted_end_time - start_time))  # 更新外部循环的进度条
 
 progress_bar.close()
 

@@ -56,9 +56,10 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
             recognized_word = recognized_word.replace(" ", "-")
             new_file_name = f"{output_folder}/{str(word_index).zfill(4)}_{recognized_word}.wav"
             os.rename(segment_file, new_file_name)
-            # print(f"重命名为: {new_file_name}")
-            word_index += 1
+        else:
+            print(f"Skip segment_{word_index}.wav")
 
+        word_index += 1
         # 更新进度条，假设每个 segment 的长度为音频片段的一部分
         if progress_bar:
-            progress_bar.update(len(segment)/1000)  # 更新进度条，增加处理的音频长度
+            progress_bar.update(len(segment))  # 更新进度条，增加处理的音频长度

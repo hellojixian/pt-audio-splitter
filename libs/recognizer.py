@@ -16,14 +16,14 @@ def recognize_and_rename_audio(audio_file_path):
     text = ''.join([c for c in text if c.isalnum() or c.isspace()])
     if not text: return
     if len(result['segments']) == 0: return
-    avg_logprob = result['segments'][0]['avg_logprob']
-    no_speech_prob = result['segments'][0]['no_speech_prob']
-    if avg_logprob < -1:
-        print(f"Skip Text: {text}  avg_logprob: {avg_logprob}")
-        return
+    # avg_logprob = result['segments'][0]['avg_logprob']
+    # no_speech_prob = result['segments'][0]['no_speech_prob']
+    # if avg_logprob < -1:
+    #     print(f"Skip Text: {text}  avg_logprob: {avg_logprob}")
+    #     return
 
-    if no_speech_prob > 0.2:
-        print(f"Skip Text: {text}  no_speech_prob: {no_speech_prob}")
-        return
+    # if no_speech_prob > 0.5:
+    #     print(f"Skip Text: {text}  no_speech_prob: {no_speech_prob}")
+    #     return
     # print(f"识别结果: {text} (avg_logprob: {avg_logprob}, no_speech_prob: {no_speech_prob})")
     return text
