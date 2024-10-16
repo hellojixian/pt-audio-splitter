@@ -6,10 +6,11 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Audio Splitter tool")
 parser.add_argument("source", type=str, help="source audio file, in ./source folder eg: raw_audio.wav")
+parser.add_argument("--model", type=str, help="specify the AI model to use", default="medium.en")
 args = parser.parse_args()
 
 from libs.spliter import find_nearest_silence, process_audio_chunk, init_folders
-from libs.recognizer import recognize_and_rename_audio
+from libs.recognizer import recognize_and_rename_audio, init_ai
 # 定义每次加载的最大时间块大小（例如5分钟的块，300秒 = 300000毫秒）
 chunk_duration = 60000   # 最大1分钟的音频块
 
@@ -25,6 +26,7 @@ progress_bar = tqdm(total=total_duration, unit='sec', desc='Processing Audio')
 chunk_index = 0
 start_time = 0
 
+init_ai(args.model)
 init_folders()
 while start_time < total_duration:
     end_time = min(start_time + chunk_duration, total_duration)

@@ -1,14 +1,20 @@
 import whisper
 import warnings
+import os
 
-# 初始化 Whisper 模型
-print("加载模型...")
-warnings.filterwarnings("ignore", category=FutureWarning)
-model = whisper.load_model("medium.en")  # 你可以选择 'base', 'small', 'medium', 'large' 等不同模型
-print(f"模型加载完成！{model.device}")
-
-# print(whisper.available_models())
-# ['tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large', 'large-v3-turbo', 'turbo']
+model = None
+def init_ai(model_name):
+    global model
+    # 初始化 Whisper 模型
+    if model_name in whisper.available_models():
+        print(f"加载模型: {model_name}")
+        warnings.filterwarnings("ignore", category=FutureWarning)
+        model = whisper.load_model(model_name)  # 你可以选择 'base', 'small', 'medium', 'large' 等不同模型
+        print(f"模型加载完成！{model.device}")
+    else:
+        print(f"无效模型: {model_name}")
+        print(f"可用模型: {whisper.available_models()}")
+        os.exit(1)
 
 def recognize_and_rename_audio(audio_file_path):
     """使用 Whisper 模型识别音频内容，并返回第一个单词"""
