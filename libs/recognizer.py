@@ -22,11 +22,11 @@ def recognize_and_rename_audio(audio_file_path):
     avg_logprob = result['segments'][0]['avg_logprob']
     no_speech_prob = result['segments'][0]['no_speech_prob']
     if avg_logprob < -1.5:
-        print(f"Skip Text: {text}  avg_logprob: {avg_logprob}")
+        # print(f"Skip Text: {text}  avg_logprob: {avg_logprob}")
         return
 
     if no_speech_prob > 0.45:
-        print(f"Skip Text: {text}  no_speech_prob: {no_speech_prob}")
+        # print(f"Skip Text: {text}  no_speech_prob: {no_speech_prob}")
         return
-    print(f"识别结果: {text} (avg_logprob: {avg_logprob}, no_speech_prob: {no_speech_prob})")
+    # print(f"识别结果: {text} (avg_logprob: {avg_logprob}, no_speech_prob: {no_speech_prob})")
     return text
