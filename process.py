@@ -2,15 +2,20 @@
 from pydub import AudioSegment
 import os
 from tqdm import tqdm
+import argparse
+
+parser = argparse.ArgumentParser(description="Audio Splitter tool")
+parser.add_argument("source", type=str, help="source audio file, in ./source folder eg: raw_audio.wav")
+args = parser.parse_args()
+
 from libs.spliter import find_nearest_silence, process_audio_chunk, init_folders
 from libs.recognizer import recognize_and_rename_audio
-
 # 定义每次加载的最大时间块大小（例如5分钟的块，300秒 = 300000毫秒）
 chunk_duration = 60000   # 最大1分钟的音频块
 
 # 创建文件夹存储片段
 project_folder = os.path.dirname(__file__)
-audio = AudioSegment.from_wav(f"{project_folder}/source/raw_audio_1.wav")
+audio = AudioSegment.from_wav(f"{project_folder}/source/{args.source}")
 
 # 加载大文件
 total_duration = len(audio)  # 获取总长度（毫秒）
