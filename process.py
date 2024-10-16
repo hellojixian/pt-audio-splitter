@@ -2,8 +2,8 @@
 from pydub import AudioSegment
 import os
 from tqdm import tqdm
-from .lib.splitter import find_nearest_silence, process_audio_chunk, init_folders
-from .recognizer import recognize_and_rename_audio
+from .libs.spliter import find_nearest_silence, process_audio_chunk, init_folders
+from .libs.recognizer import recognize_and_rename_audio
 
 # 定义每次加载的最大时间块大小（例如5分钟的块，300秒 = 300000毫秒）
 chunk_duration = 60000   # 最大1分钟的音频块
@@ -14,7 +14,7 @@ audio = AudioSegment.from_wav(f"{project_folder}/source/raw_audio_1.wav")
 
 # 加载大文件
 total_duration = len(audio)  # 获取总长度（毫秒）
-progress_bar = tqdm(total=total_duration, unit='ms', desc='Processing Audio')
+progress_bar = tqdm(total=total_duration/1000, unit='sec', desc='Processing Audio')
 
 # 按块处理，寻找静音位置作为边界
 chunk_index = 0
@@ -37,7 +37,7 @@ while start_time < total_duration:
     start_time = adjusted_end_time
     chunk_index += 1
 
-    progress_bar.update(adjusted_end_time - start_time)  # 更新外部循环的进度条
+    progress_bar.update((adjusted_end_time - start_time)/1000)  # 更新外部循环的进度条
 
 progress_bar.close()
 

@@ -60,4 +60,4 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
 
         # 更新进度条，假设每个 segment 的长度为音频片段的一部分
         if progress_bar:
-            progress_bar.update(len(segment))  # 更新进度条，增加处理的音频长度
+            progress_bar.update(len(segment/1000))  # 更新进度条，增加处理的音频长度
