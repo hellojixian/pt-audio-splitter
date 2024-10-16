@@ -33,7 +33,7 @@ def find_nearest_silence(audio_chunk, start_time, chunk_duration, silence_thresh
     # 如果没有找到合适的静音位置，返回原来的块结束位置
     return start_time + chunk_duration
 
-def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_silence_len=500, cb):
+def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_silence_len=500, cb=None):
     global word_index
     # 使用 pydub 的 split_on_silence 函数，基于静音分割音频
     segments = split_on_silence(
