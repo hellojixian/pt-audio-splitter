@@ -43,6 +43,8 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
         keep_silence=200  # 保留一些静音部分 (这里设置为200ms)
     )
 
+    chunk_length = len(audio_chunk)
+    total_segments = len(segments)
     # 保存音频片段并使用 Whisper 识别内容
     for _, segment in enumerate(segments):
         segment_file = f"{output_segments_folder}/segment_{word_index}.wav"
@@ -56,10 +58,15 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
             recognized_word = recognized_word.replace(" ", "-")
             new_file_name = f"{output_folder}/{str(word_index).zfill(4)}_{recognized_word}.wav"
             os.rename(segment_file, new_file_name)
+
+            # convert to mp3
+            audio = AudioSegment.from_wav(new_file_name)
+            audio.export(new_file_name.replace(".wav", ".mp3"), format="mp3")
+            os.remove(new_file_name)
         else:
             print(f"Skip segment_{word_index}.wav")
 
         word_index += 1
         # 更新进度条，假设每个 segment 的长度为音频片段的一部分
         if progress_bar:
-            progress_bar.update(len(segment))  # 更新进度条，增加处理的音频长度
+            progress_bar.update(int(chunk_length/total_segments))  # 更新进度条，增加处理的音频长度
