@@ -3,9 +3,10 @@ from pydub import AudioSegment
 from pydub.silence import detect_silence, split_on_silence
 import os
 import whisper
+from tqdm import tqdm
 
 # 定义每次加载的最大时间块大小（例如5分钟的块，300秒 = 300000毫秒）
-chunk_duration = 60000 * 5  # 最大5分钟的音频块
+chunk_duration = 60000   # 最大1分钟的音频块
 chunk_nearset_silence = 5000  # 5秒内的静音位置
 # 创建文件夹存储片段
 project_folder = os.path.dirname(__file__)
@@ -18,7 +19,9 @@ for file in os.listdir(output_folder):
     os.remove(os.path.join(output_folder, file))
 
 # 初始化 Whisper 模型
+print("加载模型...")
 model = whisper.load_model("base")  # 你可以选择 'base', 'small', 'medium', 'large' 等不同模型
+print("模型加载完成！")
 
 def find_nearest_silence(audio_chunk, start_time, chunk_duration, silence_thresh=-40, min_silence_len=300):
     """找到临近静音的位置以便调整块的结束位置"""
@@ -36,16 +39,15 @@ def find_nearest_silence(audio_chunk, start_time, chunk_duration, silence_thresh
 
 def recognize_and_rename_audio(audio_file_path):
     """使用 Whisper 模型识别音频内容，并返回第一个单词"""
-    result = model.transcribe(audio_file_path)
+    result = model.transcribe(audio_file_path, fp16=False)
     # 获取识别的文本内容
-    print(result)
     text = result['text'].strip()
     text = text.lower()
     # remove punctuations from text but keep the spaces
     text = ''.join([c for c in text if c.isalnum() or c.isspace()])
     return text
 
-def process_audio_chunk(audio_chunk, chunk_index=0, silence_thresh=-40, min_silence_len=500):
+def process_audio_chunk(audio_chunk, chunk_index=0, progress_bar=None, silence_thresh=-40, min_silence_len=500):
     global word_index
     # 使用 pydub 的 split_on_silence 函数，基于静音分割音频
     segments = split_on_silence(
@@ -70,8 +72,14 @@ def process_audio_chunk(audio_chunk, chunk_index=0, silence_thresh=-40, min_sile
         print(f"重命名为: {new_file_name}")
         word_index += 1
 
+        # 更新进度条，假设每个 segment 的长度为音频片段的一部分
+        if progress_bar:
+            progress_bar.update(len(segment))  # 更新进度条，增加处理的音频长度
+
 # 加载大文件
 total_duration = len(audio)  # 获取总长度（毫秒）
+
+progress_bar = tqdm(total=total_duration, unit='ms', desc='Processing Audio')
 
 # 按块处理，寻找静音位置作为边界
 chunk_index = 0
@@ -86,11 +94,15 @@ while start_time < total_duration:
     # 如果找到的结束时间比之前的块要长，则更新为新的块结束时间
     audio_chunk = audio[start_time:adjusted_end_time]
 
-    # 处理这个音频块
-    process_audio_chunk(audio_chunk, chunk_index=chunk_index)
+    # 处理这个音频块并更新进度条
+    process_audio_chunk(audio_chunk, chunk_index=chunk_index, progress_bar=progress_bar)
 
     # 更新下一个块的起始时间
     start_time = adjusted_end_time
     chunk_index += 1
+
+    progress_bar.update(adjusted_end_time - start_time)  # 更新外部循环的进度条
+
+progress_bar.close()
 
 print("音频处理完成！")

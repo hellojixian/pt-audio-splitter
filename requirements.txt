@@ -1,3 +1,4 @@
 pydub
 numpy
 openai-whisper
+tqdm
