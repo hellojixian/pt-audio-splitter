@@ -56,7 +56,7 @@ def process_audio_chunk(audio_chunk, progress_bar=None, silence_thresh=-40, min_
         # 使用识别到的第一个单词重新命名音频文件
         if recognized_word:
             recognized_word = recognized_word.replace(" ", "-")
-            new_file_name = f"{output_folder}/{str(word_index).zfill(4)}_{recognized_word}.wav"
+            new_file_name = f"{output_folder}/{str(word_index).zfill(5)}_{recognized_word}.wav"
             os.rename(segment_file, new_file_name)
 
             # convert to mp3
